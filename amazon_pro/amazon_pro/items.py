@@ -8,5 +8,10 @@ import scrapy
 
 class AmazonProItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    title = scrapy.Field()
+    rating = scrapy.Field()
+    username = scrapy.Field()
+    description = scrapy.Field()
+    date = scrapy.Field()
+
+    
