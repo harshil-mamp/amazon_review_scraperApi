@@ -13,5 +13,9 @@ class AmazonProItem(scrapy.Item):
     username = scrapy.Field()
     description = scrapy.Field()
     date = scrapy.Field()
+    image_urls = scrapy.Field()
+    asin_number = scrapy.Field()
+    product_url = scrapy.Field()
+    # images = scrapy.Field()
 
     
