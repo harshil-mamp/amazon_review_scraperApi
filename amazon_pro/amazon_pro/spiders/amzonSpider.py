@@ -165,8 +165,8 @@ import logging
 from urllib import parse
 
 client = ScraperAPIClient('b90c4dcc61e317892bb64c328c931de7')
-scraperAPI = False
-scraperDo = True
+scraperAPI = True
+scraperDo = False
 logging.basicConfig(filename='scraper_amazom_new.log', level=logging.ERROR)
 # logging.basicConfig(filename='scraper_amazom_critical.log', level=logging.CRITICAL)
 
@@ -204,8 +204,8 @@ class ReviewSpider(scrapy.Spider):
             total_reviews_text = response.css('#filter-info-section .a-size-base::text').get()
             total_reviews_text = total_reviews_text.strip()
             matches = re.search(self.total_review_re_pattern, total_reviews_text)
-            asin_number = response.request.url.split("/")[4]
-            print(asin_number)
+            # asin_number = response.request.url.split("/")[4]
+            # print(asin_number)
 
             if matches:
                 total_reviews = int(matches.group(1).replace(',', ''))
@@ -221,6 +221,10 @@ class ReviewSpider(scrapy.Spider):
                 for page_url in page_urls:
                     if scraperAPI:
                         yield scrapy.Request(client.scrapyGet(url=page_url), callback=self.parse_next_pages, errback=self.handle_error)
+                    elif scraperDo:
+                        target_url = parse.quote(page_url)
+                        new_url = f"http://api.scrape.do?token=9c69a1e877664a8791388922be4d0356e1d27cbae84&url={target_url}"
+                        yield scrapy.Request(url=new_url, callback=self.parse, errback=self.handle_error)
                     else:
                         yield scrapy.Request(url=page_url, callback=self.parse_next_pages, errback=self.handle_error)
             
@@ -253,7 +257,7 @@ class ReviewSpider(scrapy.Spider):
                 item_obj['username'] = username
                 item_obj['description'] = description
                 item_obj['date'] = date
-                item_obj['asin_number'] =asin_number
+                item_obj['asin_number'] =self.asin
                 item_obj['image_urls'] = image_url
                 item_obj['product_url'] = product_url
 
